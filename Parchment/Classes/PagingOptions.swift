@@ -1,6 +1,6 @@
 import UIKit
 
-public struct PagingOptions {
+public struct PagingOptions: @unchecked Sendable {
     /// The size for each of the menu items. _Default:
     /// .sizeToFit(minWidth: 150, height: 40)_
     public var menuItemSize: PagingMenuItemSize

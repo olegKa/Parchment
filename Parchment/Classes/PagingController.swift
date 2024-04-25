@@ -259,12 +259,15 @@ final class PagingController: NSObject {
                 animated: false
             )
 
-            collectionView.selectItem(
-                at: visibleItems.indexPath(for: pagingItem),
-                animated: false,
-                scrollPosition: options.scrollPosition
-            )
-
+            DispatchQueue.main.async { [weak self] in
+                guard let self, let indexPath = self.visibleItems.indexPath(for: pagingItem) else { return }
+                self.collectionView.selectItem(
+                    at: indexPath,
+                    animated: false,
+                    scrollPosition: self.options.scrollPosition
+                )
+            }
+            
         default:
             break
         }
