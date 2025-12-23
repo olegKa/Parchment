@@ -1,6 +1,7 @@
 @testable import Parchment
 import UIKit
 
+@MainActor
 final class MockCollectionView: CollectionView, Mock {
     enum Action: Equatable {
         case contentOffset(CGPoint)
@@ -15,6 +16,7 @@ final class MockCollectionView: CollectionView, Mock {
             animated: Bool,
             scrollPosition: UICollectionView.ScrollPosition
         )
+        case indexPathForItem(point: CGPoint)
     }
 
     var visibleItems: (() -> Int)!
@@ -111,6 +113,13 @@ final class MockCollectionView: CollectionView, Mock {
                 y: 0
             )
         }
+    }
+
+    func indexPathForItem(at point: CGPoint) -> IndexPath? {
+        calls.append(MockCall(
+            action: .collectionView(.indexPathForItem(point: point))
+        ))
+        return nil
     }
 
     func register(_: AnyClass?, forCellWithReuseIdentifier _: String) {
