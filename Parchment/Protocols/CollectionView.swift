@@ -1,5 +1,6 @@
 import UIKit
 
+@MainActor
 protocol CollectionViewLayout: AnyObject {
     var state: PagingState { get set }
     var visibleItems: PagingItems { get set }
@@ -13,6 +14,7 @@ protocol CollectionViewLayout: AnyObject {
 
 extension PagingCollectionViewLayout: CollectionViewLayout {}
 
+@MainActor
 protocol CollectionView: AnyObject {
     var indexPathsForVisibleItems: [IndexPath] { get }
     var isDragging: Bool { get }
@@ -36,6 +38,7 @@ protocol CollectionView: AnyObject {
     func layoutIfNeeded()
     func setContentOffset(_ contentOffset: CGPoint, animated: Bool)
     func selectItem(at indexPath: IndexPath?, animated: Bool, scrollPosition: UICollectionView.ScrollPosition)
+    func indexPathForItem(at point: CGPoint) -> IndexPath?
 }
 
 extension UICollectionView: CollectionView {}

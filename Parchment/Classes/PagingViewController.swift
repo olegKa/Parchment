@@ -58,7 +58,7 @@ open class PagingViewController:
         set { options.menuPosition = newValue }
     }
 
-    /// Determine the transition behaviour of menu items while scrolling
+    /// Determine the transition behavior of menu items while scrolling
     /// the content. _Default: .scrollAlongside_
     public var menuTransition: PagingMenuTransition {
         get { return options.menuTransition }
@@ -83,7 +83,7 @@ open class PagingViewController:
     }
 
     /// Determine how the selected menu item should be aligned when it
-    /// is selected. Effectivly the same as the
+    /// is selected. Effectively the same as the
     /// `UICollectionViewScrollPosition`. _Default: .preferCentered_
     public var selectedScrollPosition: PagingSelectedScrollPosition {
         get { return options.selectedScrollPosition }
@@ -266,7 +266,7 @@ open class PagingViewController:
 
     /// An instance that stores all the customization so that it's
     /// easier to share between other classes.
-    public private(set) var options: PagingOptions {
+    public internal(set) var options: PagingOptions {
         didSet {
             if options.menuLayoutClass != oldValue.menuLayoutClass {
                 let layout = createLayout(layout: options.menuLayoutClass.self)
@@ -287,6 +287,7 @@ open class PagingViewController:
 
     private let pagingController: PagingController
     private var didLayoutSubviews: Bool = false
+    private var didTransitionSize: Bool = false
 
     private var pagingView: PagingView {
         return view as! PagingView
@@ -437,14 +438,14 @@ open class PagingViewController:
     }
 
     /// Selects a given paging item. This need to be called after you
-    /// initilize the `PagingViewController` to set the initial
+    /// initialize the `PagingViewController` to set the initial
     /// `PagingItem`. This can be called both before and after the view
     /// has been loaded. You can also use this to programmatically
     /// navigate to another `PagingItem`.
     ///
     /// - Parameter pagingItem: The `PagingItem` to be displayed.
     /// - Parameter animated: A boolean value that indicates whether
-    /// the transtion should be animated. Default is false.
+    /// the transition should be animated. Default is false.
     open func select(pagingItem: PagingItem, animated: Bool = false) {
         pagingController.select(pagingItem: pagingItem, animated: animated)
     }
@@ -488,6 +489,20 @@ open class PagingViewController:
         configureContentInteraction()
     }
 
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if #unavailable(iOS 16), didTransitionSize {
+            view.layoutIfNeeded()
+            pagingController.transitionSize()
+        }
+    }
+
+    open override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        didTransitionSize = false
+        didLayoutSubviews = false
+    }
+
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -502,9 +517,10 @@ open class PagingViewController:
 
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        didTransitionSize = true
         coordinator.animate(alongsideTransition: { _ in
             self.pagingController.transitionSize()
-    }, completion: nil)
+        })
     }
 
     /// Register cell class for paging cell
@@ -611,8 +627,8 @@ open class PagingViewController:
 
     open func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let pagingItem = pagingController.visibleItems.pagingItem(for: indexPath)
-        delegate?.pagingViewController(self, didSelectItem: pagingItem)
         pagingController.select(indexPath: indexPath, animated: true)
+        delegate?.pagingViewController(self, didSelectItem: pagingItem)
     }
 
     open func collectionView(_: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {

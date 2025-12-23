@@ -34,12 +34,12 @@ class ImagePagingView: PagingView {
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
+            collectionView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
 
             pageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             pageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             pageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            pageView.topAnchor.constraint(equalTo: topAnchor),
+            pageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
         ])
     }
 }
@@ -163,7 +163,7 @@ class UnsplashViewController: UIViewController {
         )
 
         // Add the paging view controller as a child view controller and
-        // contrain it to all edges.
+        // constrain it to all edges.
         addChild(pagingViewController)
         view.addSubview(pagingViewController.view)
         view.constrainToEdges(pagingViewController.view)
@@ -236,7 +236,7 @@ extension UnsplashViewController: PagingViewControllerDataSource {
 extension UnsplashViewController: ImagesViewControllerDelegate {
     func imagesViewControllerDidScroll(_ imagesViewController: ImagesViewController) {
         // Calculate the menu height based on the content offset of the
-        // currenly selected view controller and update the menu.
+        // currently selected view controller and update the menu.
         let height = calculateMenuHeight(for: imagesViewController.collectionView)
         updateMenu(height: height)
     }

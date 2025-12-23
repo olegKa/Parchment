@@ -1,7 +1,7 @@
 import Parchment
 import UIKit
 
-// This example shows how to use Parchment togehter with
+// This example shows how to use Parchment together with
 // "prefersLargeTitles" on UINavigationBar. It works by creating a
 // "hidden" scroll view that is added as a subview to the view
 // controller. Apparently, UIKit will look for a scroll view that is
@@ -58,27 +58,8 @@ class LargeTitlesViewController: UIViewController {
         // Tell the navigation bar that we want to have large titles
         navigationController.navigationBar.prefersLargeTitles = true
 
-        // Customize the menu to match the navigation bar color
-        let blue = UIColor(red: 3 / 255, green: 125 / 255, blue: 233 / 255, alpha: 1)
-
-        if #available(iOS 13.0, *) {
-            let appearance = UINavigationBarAppearance()
-            appearance.backgroundColor = blue
-            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-
-            UINavigationBar.appearance().tintColor = .white
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().compactAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        } else {
-            UINavigationBar.appearance().tintColor = .white
-            UINavigationBar.appearance().barTintColor = blue
-            UINavigationBar.appearance().isTranslucent = false
-        }
-
         view.backgroundColor = .white
-        pagingViewController.menuBackgroundColor = blue
+        pagingViewController.menuBackgroundColor = .systemBlue
         pagingViewController.menuItemSize = .fixed(width: 150, height: 30)
         pagingViewController.textColor = UIColor.white.withAlphaComponent(0.7)
         pagingViewController.selectedTextColor = UIColor.white
@@ -135,7 +116,7 @@ class LargeTitlesViewController: UIViewController {
         hiddenScrollView.contentInset = viewController.tableView.contentInset
         hiddenScrollView.contentOffset = viewController.tableView.contentOffset
 
-        // Set the UITableViewDelegate to the currenly visible table view.
+        // Set the UITableViewDelegate to the currently visible table view.
         viewController.tableView.delegate = self
     }
 }
@@ -148,6 +129,7 @@ extension LargeTitlesViewController: PagingViewControllerDataSource {
         let insets = UIEdgeInsets(top: pagingViewController.options.menuItemSize.height, left: 0, bottom: 0, right: 0)
         viewController.tableView.scrollIndicatorInsets = insets
         viewController.tableView.contentInset = insets
+        viewController.tableView.contentOffset.y = -insets.top
         return viewController
     }
 
@@ -172,7 +154,7 @@ extension LargeTitlesViewController: PagingViewControllerDelegate {
         guard let destinationViewController = destinationViewController as? TableViewController else { return }
         guard let startingViewController = startingViewController as? TableViewController else { return }
 
-        // Set the UITableViewDelegate back to the currenly selected
+        // Set the UITableViewDelegate back to the currently selected
         // view controller when the page scroll ended.
         if transitionSuccessful {
             destinationViewController.tableView.delegate = self
